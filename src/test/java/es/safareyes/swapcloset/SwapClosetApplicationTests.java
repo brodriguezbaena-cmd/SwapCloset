@@ -16,7 +16,7 @@ import org.springframework.test.context.TestPropertySource;
         "spring.sql.init.mode=never"
 })
 class SwapApplicationTest {
-//
+
     @Test
     @DisplayName("El contexto de la aplicación carga correctamente")
     void contextLoads() {
