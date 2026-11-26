@@ -19,27 +19,19 @@ import java.util.List;
 public interface PerfilMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(source = "nombreUsuario", target = "nombre")
-    @Mapping(source = "tallaZapatos", target = "talla_zapatos")
-    @Mapping(source = "tallaPantalon", target = "talla_pantalon")
     @Mapping(target = "estilos", ignore = true)
     @Mapping(target = "prendas", ignore = true)
     Perfil toEntity(RegistroRequest request);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "nombre", ignore = true)
+    @Mapping(target = "nombreUsuario", ignore = true)
     @Mapping(target = "email", ignore = true)
     @Mapping(target = "fechaNacimiento", ignore = true)
-    @Mapping(source = "tallaZapatos", target = "talla_zapatos")
-    @Mapping(source = "tallaPantalon", target = "talla_pantalon")
     @Mapping(target = "estilos", ignore = true)
     @Mapping(target = "prendas", ignore = true)
     void actualizar(PerfilActualizarRequest request, @MappingTarget Perfil perfil);
 
-    @Mapping(source = "nombre", target = "nombreUsuario")
-    @Mapping(source = "talla_zapatos", target = "tallaZapatos")
-    @Mapping(source = "talla_pantalon", target = "tallaPantalon")
     @Mapping(target = "reputacion", ignore = true)
     @Mapping(target = "prendas", ignore = true)
     PerfilPublicoResponse toPublico(Perfil perfil);

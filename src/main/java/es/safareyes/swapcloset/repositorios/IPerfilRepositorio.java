@@ -1,34 +1,42 @@
 package es.safareyes.swapcloset.repositorios;
 
-import es.safareyes.swapcloset.dtos.PerfilesPorCiudad;
 import es.safareyes.swapcloset.Modelos.Perfil;
+import es.safareyes.swapcloset.dtos.PerfilAfinView;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import java.util.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface IPerfilRepositorio extends JpaRepository<Perfil, Integer> {
 
+    boolean existsByEmailIgnoreCase(String email);
 
-    List<Perfil> findAllByCiudad(String ciudad);
+    boolean existsByNombreUsuarioIgnoreCase(String nombreUsuario);
 
-    List<Perfil> findAllByCiudadAndTallaCamiseta(String ciudad, String tallaCamiseta);
+    @EntityGraph(attributePaths = "estilos")
+    Optional<Perfil> findConEstilosById(Integer id);
 
-
-    @Query("select p from Perfil p join p.estilos e where e.nombre = :nombre")
-    List<Perfil> buscarPorNombreEstilo(@Param("nombre") String nombreEstilo);
-
-
-    @Query(value = "select * from perfil where ciudad = :ciudad " +
-            "and biografia like concat('%', :palabra, '%')",
-            nativeQuery = true)
-    List<Perfil> buscarPorCiudadYPalabraBiografia(@Param("ciudad") String ciudad,
-                                                  @Param("palabra") String palabra);
-
-
-    @Query("select new es.safareyes.swapcloset.dtos.PerfilesPorCiudad(p.ciudad, count(p)) " +
-            "from Perfil p group by p.ciudad order by p.ciudad")
-    List<PerfilesPorCiudad> contarPerfilesPorCiudad();
+    @Query("""
+            select p.id as id,
+                   p.nombreUsuario as nombreUsuario,
+                   p.ciudad as ciudad,
+                   count(distinct e.id) as estilosComunes,
+                   (select avg(v.puntuacion) from Valoracion v where v.valorado.id = p.id) as reputacionMedia,
+                   (select count(v) from Valoracion v where v.valorado.id = p.id) as totalValoraciones
+            from Perfil p
+            join p.estilos e
+            where p.id <> :perfilId
+              and e.id in :estilosIds
+            group by p.id, p.nombreUsuario, p.ciudad
+            order by count(distinct e.id) desc, p.id asc
+            """)
+    List<PerfilAfinView> buscarAfines(@Param("perfilId") Integer perfilId,
+                                      @Param("estilosIds") List<Integer> estilosIds,
+                                      Pageable pageable);
 }

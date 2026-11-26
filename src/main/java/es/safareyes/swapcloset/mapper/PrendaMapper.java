@@ -22,6 +22,7 @@ public interface PrendaMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "perfil", ignore = true)
     @Mapping(target = "categoria", ignore = true)
+    @Mapping(target = "situacion", ignore = true)
     @Mapping(target = "disponibilidad", ignore = true)
     @Mapping(target = "fechaPublicacion", ignore = true)
     @Mapping(target = "fotos", ignore = true)
@@ -31,6 +32,7 @@ public interface PrendaMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "perfil", ignore = true)
     @Mapping(target = "categoria", ignore = true)
+    @Mapping(target = "situacion", ignore = true)
     @Mapping(target = "disponibilidad", ignore = true)
     @Mapping(target = "fechaPublicacion", ignore = true)
     @Mapping(target = "fotos", ignore = true)
@@ -39,7 +41,7 @@ public interface PrendaMapper {
     @Mapping(source = "categoria.nombre", target = "categoria")
     @Mapping(source = "perfil.ciudad", target = "ciudad")
     @Mapping(source = "perfil.id", target = "propietariaId")
-    @Mapping(source = "perfil.nombre", target = "propietariaNombreUsuario")
+    @Mapping(source = "perfil.nombreUsuario", target = "propietariaNombreUsuario")
     @Mapping(source = "fotos", target = "fotoPortadaId", qualifiedByName = "portada")
     PrendaTarjetaResponse toTarjeta(Prenda prenda);
 

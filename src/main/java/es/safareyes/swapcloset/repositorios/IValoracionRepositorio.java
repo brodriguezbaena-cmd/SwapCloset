@@ -1,19 +1,18 @@
 package es.safareyes.swapcloset.repositorios;
 
 import es.safareyes.swapcloset.Modelos.Valoracion;
+import es.safareyes.swapcloset.dtos.response.ReputacionResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import java.util.*;
 
 @Repository
 public interface IValoracionRepositorio extends JpaRepository<Valoracion, Integer> {
 
-    List<Valoracion> findAllByPuntuacionGreaterThanEqual(Integer puntuacion);
+    boolean existsBySolicitudIdAndAutorId(Integer solicitudId, Integer autorId);
 
-    Optional<Valoracion> findBysolicitudes(Integer id_solicitud);
-
-
-    @Query("select avg(v.puntuacion) from Valoracion v")
-    Double puntuacionMedia();
+    @Query("select new es.safareyes.swapcloset.dtos.response.ReputacionResponse(avg(v.puntuacion), count(v)) " +
+            "from Valoracion v where v.valorado.id = :perfilId")
+    ReputacionResponse reputacionDe(@Param("perfilId") Integer perfilId);
 }

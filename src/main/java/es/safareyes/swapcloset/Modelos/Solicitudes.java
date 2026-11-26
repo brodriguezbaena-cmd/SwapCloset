@@ -1,12 +1,11 @@
 package es.safareyes.swapcloset.Modelos;
 
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "solicitudes")
@@ -21,9 +20,9 @@ public class Solicitudes {
     @Column(name = "id_solicitud")
     private Integer id;
 
-    // 'Intercambio' | 'Prestamo'
+    @Enumerated(EnumType.STRING)
     @Column(name = "tipo_solicitud", length = 50)
-    private String tipoSolicitud;
+    private TipoSolicitud tipoSolicitud;
 
     @Column(name = "fecha_inicio")
     private LocalDate fechaInicio;
@@ -31,26 +30,47 @@ public class Solicitudes {
     @Column(name = "fecha_fin")
     private LocalDate fechaFin;
 
-    // NULL mientras nadie ha respondido
     @Column(name = "fecha_respuesta")
     private LocalDate fechaRespuesta;
 
-    // 'Pendiente' | 'Aceptada' | 'Rechazada'
+    @Enumerated(EnumType.STRING)
     @Column(name = "estado", length = 50)
-    private String estado;
+    private EstadoSolicitud estado;
 
     @Column(name = "fecha_creacion")
     private LocalDate fechaCreacion;
 
-    // Perfil que hace la solicitud
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_perfil")
-    private Perfil perfil;
+    private Perfil solicitante;
 
-    // Tabla puente solicitud_recibe (id_solicitud, id_perfil): perfiles que reciben la solicitud
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_prenda")
+    private Prenda prenda;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_prenda_ofrecida")
+    private Prenda prendaOfrecida;
+
     @ManyToMany
     @JoinTable(name = "solicitud_recibe",
             joinColumns = @JoinColumn(name = "id_solicitud"),
             inverseJoinColumns = @JoinColumn(name = "id_perfil"))
-    private Set<Perfil> destinatarios;
+    private Set<Perfil> destinatarios = new HashSet<>();
+
+    public Perfil getDestinatario() {
+        return (destinatarios == null || destinatarios.isEmpty()) ? null : destinatarios.iterator().next();
+    }
+
+    public boolean esSolicitante(Integer perfilId) {
+        return solicitante != null && solicitante.getId().equals(perfilId);
+    }
+
+    public boolean esDestinatario(Integer perfilId) {
+        return destinatarios != null && destinatarios.stream().anyMatch(d -> d.getId().equals(perfilId));
+    }
+
+    public boolean esParticipante(Integer perfilId) {
+        return esSolicitante(perfilId) || esDestinatario(perfilId);
+    }
 }

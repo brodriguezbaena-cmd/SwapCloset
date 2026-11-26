@@ -1,14 +1,10 @@
 package es.safareyes.swapcloset.Modelos;
 
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.HashSet;
-import java.util.Set;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "mensajes")
@@ -32,17 +28,11 @@ public class Mensaje {
     @Column(name = "contenido", length = 500)
     private String contenido;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_solicitud")
+    private Solicitudes solicitud;
 
-    @ManyToMany
-    @JoinTable(name = "mensaje_envia",
-            joinColumns = @JoinColumn(name = "id_mensaje"),
-            inverseJoinColumns = @JoinColumn(name = "id_perfil"))
-    private Set<Perfil> remitentes = new HashSet<>();
-
-    // Tabla puente mensaje_recibe (id_mensaje, id_perfil)
-    @ManyToMany
-    @JoinTable(name = "mensaje_recibe",
-            joinColumns = @JoinColumn(name = "id_mensaje"),
-            inverseJoinColumns = @JoinColumn(name = "id_perfil"))
-    private Set<Perfil> destinatarios = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_autor")
+    private Perfil autor;
 }

@@ -1,11 +1,9 @@
 package es.safareyes.swapcloset.Modelos;
 
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "valoraciones")
@@ -29,13 +27,15 @@ public class Valoracion {
     @Column(name = "fecha")
     private LocalDate fecha;
 
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_solicitud", unique = true)
-    private Solicitudes solicitudes;
-
-    // Perfil que escribe la valoración
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_perfil")
-    private Perfil perfil;
+    @JoinColumn(name = "id_solicitud")
+    private Solicitudes solicitud;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_autor")
+    private Perfil autor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_valorado")
+    private Perfil valorado;
 }

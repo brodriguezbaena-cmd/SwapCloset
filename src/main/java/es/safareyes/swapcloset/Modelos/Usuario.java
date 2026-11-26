@@ -4,26 +4,28 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "Usuario")
-@Getter @Setter
-@EqualsAndHashCode
+@Table(name = "usuario")
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class Usuario {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario")
+    @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(name = "contrasena")
-    private String contraseña;
+    @Column(name = "contrasena", length = 100)
+    private String contrasena;
 
-    @Column(name = "rol")
-    private String rol;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rol", length = 50)
+    private Rol rol;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_perfil", unique = true)
     private Perfil perfil;
 }
-

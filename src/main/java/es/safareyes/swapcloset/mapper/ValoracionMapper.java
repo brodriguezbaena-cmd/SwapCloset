@@ -8,8 +8,8 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface ValoracionMapper {
 
-    @Mapping(source = "solicitudes.id", target = "solicitudId")
-    @Mapping(source = "perfil.id", target = "autorId")
-    @Mapping(target = "valoradoId", ignore = true)
+    @Mapping(source = "solicitud.id", target = "solicitudId")
+    @Mapping(source = "autor.id", target = "autorId")
+    @Mapping(source = "valorado.id", target = "valoradoId")
     ValoracionResponse toResponse(Valoracion valoracion);
 }

@@ -23,23 +23,19 @@ public final class PrendaSpecs {
      * Solo prendas DISPONIBLES (los borradores y las retiradas no aparecen en búsquedas, RN-03 y RN-10).
      * Cada filtro a null se ignora.
      */
-    @SuppressWarnings("unchecked")
     public static Specification<Prenda> filtrar(Integer categoriaId, String talla, String estado,
                                                 Integer estiloId, String ciudad, TipoSolicitud oferta) {
         return (root, query, cb) -> {
-            boolean esConteo = Long.class.equals(query.getResultType()) || long.class.equals(query.getResultType());
+            boolean esConteo = query != null
+                    && (Long.class.equals(query.getResultType()) || long.class.equals(query.getResultType()));
 
-            // En la consulta de datos se cargan categoría y propietaria con un JOIN FETCH (evita N+1);
-            // en la de conteo basta un JOIN normal.
-            Join<Prenda, Perfil> perfil;
-            Join<Prenda, Categoria> categoria;
-            if (esConteo) {
-                perfil = root.join("perfil", JoinType.INNER);
-                categoria = root.join("categoria", JoinType.INNER);
-            } else {
-                perfil = (Join<Prenda, Perfil>) root.fetch("perfil", JoinType.INNER);
-                categoria = (Join<Prenda, Categoria>) root.fetch("categoria", JoinType.INNER);
+            if (!esConteo) {
+                root.fetch("perfil", JoinType.INNER);
+                root.fetch("categoria", JoinType.INNER);
             }
+
+            Join<Prenda, Perfil> perfil = root.join("perfil", JoinType.INNER);
+            Join<Prenda, Categoria> categoria = root.join("categoria", JoinType.INNER);
 
             List<Predicate> filtros = new ArrayList<>();
             filtros.add(cb.equal(root.get("situacion"), EstadoPrenda.DISPONIBLE));
@@ -57,7 +53,6 @@ public final class PrendaSpecs {
                 filtros.add(cb.equal(cb.lower(perfil.get("ciudad")), ciudad.trim().toLowerCase()));
             }
             if (estiloId != null) {
-                // estilo de la propietaria
                 Join<Perfil, ?> estilos = perfil.join("estilos", JoinType.INNER);
                 filtros.add(cb.equal(estilos.get("id"), estiloId));
             }

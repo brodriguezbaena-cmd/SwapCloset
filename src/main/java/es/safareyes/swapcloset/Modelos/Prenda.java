@@ -1,13 +1,11 @@
 package es.safareyes.swapcloset.Modelos;
 
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "prenda")
@@ -31,9 +29,12 @@ public class Prenda {
     @Column(name = "marca", length = 100)
     private String marca;
 
-    // 'Nueva con etiqueta' | 'Como nueva' | 'Buen estado' | 'Usado'
     @Column(name = "estado", length = 50)
     private String estado;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "situacion", length = 30)
+    private EstadoPrenda situacion;
 
     @Column(name = "permite_prestamo")
     private Boolean permitePrestamo;
@@ -50,7 +51,6 @@ public class Prenda {
     @Column(name = "fecha_publicacion")
     private LocalDate fechaPublicacion;
 
-    // Perfil que publica la prenda
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_perfil")
     private Perfil perfil;
