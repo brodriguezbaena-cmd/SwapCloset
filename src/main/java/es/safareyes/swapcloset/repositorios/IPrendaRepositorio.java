@@ -29,9 +29,9 @@ public interface IPrendaRepositorio extends JpaRepository<Prenda, Integer>, JpaS
                    count(distinct pr.id_prenda) as publicaciones,
                    count(distinct case when s.tipo_solicitud = 'INTERCAMBIO' then s.id_solicitud end) as intercambios,
                    count(distinct case when s.tipo_solicitud = 'PRESTAMO' then s.id_solicitud end) as prestamos
-            from prenda pr
-            join categoria c on c.id_categoria = pr.id_categoria
-            left join solicitudes s on s.id_prenda = pr.id_prenda
+            from "Swapcloset".prenda pr
+            join "Swapcloset".categoria c on c.id_categoria = pr.id_categoria
+            left join "Swapcloset".solicitudes s on s.id_prenda = pr.id_prenda
             where pr.fecha_publicacion between :desde and :hasta
             group by c.nombre, to_char(pr.fecha_publicacion, 'YYYY-MM')
             order by mes desc, categoria asc
